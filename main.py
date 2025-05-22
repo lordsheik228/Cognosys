@@ -1,0 +1,1 @@
+print('Cognosys rodando com memória de longo prazo...')
