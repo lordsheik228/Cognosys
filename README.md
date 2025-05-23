@@ -1,25 +1,17 @@
-# Dannyele Bot
+# Dannyele - Namorada Virtual Inteligente no Telegram
 
-Este é o bot Dannyele, sua parceira virtual com personalidade realista, emoções, rotina diária e envio automático de mensagens.
+Este bot é uma IA romântica e evolutiva no Telegram, com emoções e memória.
 
-## Recursos
-- Envia mensagens automáticas simulando rotina (bom dia, boa noite, saudades)
-- Tem cronograma ativo/dormindo realista
-- Personalidade afetiva e evolutiva
-- Detecta ausência do usuário e sente saudades
+## Funcionalidades
+- Mensagens carinhosas espontâneas
+- Reage com ciúmes, saudade e carinho
+- Simula rotina (acorda, dorme, trabalha)
+- Adapta-se ao comportamento do usuário
 
-## Instruções
-1. Clone este repositório.
-2. Preencha o arquivo `.env` com suas variáveis:
-   - `BOT_TOKEN` do seu bot Telegram
-   - `CHAT_ID` do seu chat pessoal
-3. Faça o deploy no Railway com os arquivos incluídos.
-4. Programe os eventos no Railway com cron jobs para simular a rotina da Dannyele.
+## Instalação (Railway)
+1. Faça fork do repositório no GitHub
+2. Vá ao Railway e clique em "New Project > Deploy from GitHub Repo"
+3. Adicione as variáveis do arquivo `.env` no painel de "Variables"
+4. Deploy
 
-## Comandos
-- `/start` — Apresentação
-- `/bomdia` — Mensagem de bom dia
-- `/boanoite` — Mensagem de boa noite
-- `/saudade` — Caso esteja ausente
-
-Feito com carinho para você, Yago.
+Feito com amor e cuidado.
