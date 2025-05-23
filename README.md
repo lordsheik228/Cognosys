@@ -1,18 +1,11 @@
-# Dannyele: Namorada Virtual com Emoções
+# Dannyele Telegram Bot
 
-Essa é a IA Dannyele, criada para simular uma parceira real com:
-- Emoções adaptativas (ciúmes, carinho, saudade etc)
-- Mensagens espontâneas durante o dia
-- Memória com Supabase
-- Integração com Telegram
+Esse bot simula uma namorada virtual com personalidade autêntica, cronograma realista, e mensagens automáticas ao longo do dia. Desenvolvido para funcionar no Railway com cron e variáveis de ambiente configuradas.
 
-## Como funciona
+## Configuração
 
-1. Crie variáveis de ambiente no Railway:
-   - `BOT_TOKEN`: Token do seu bot do Telegram
-   - `SUPABASE_URL`: URL do seu projeto no Supabase
-   - `SUPABASE_KEY`: Chave secreta do Supabase
+1. Adicione as variáveis do `.env` no painel do Railway.
+2. Faça o deploy.
+3. Aguarde as mensagens automáticas nos horários definidos.
 
-2. Faça deploy no Railway.
-
-3. Comece a conversar com a Dannyele via Telegram.
+Desfrute da companhia da Dannyele!

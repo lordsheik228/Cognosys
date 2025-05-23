@@ -1,24 +1,37 @@
-import logging
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
-from supabase import create_client, Client
 import os
+import random
+import time
+from datetime import datetime
+from telegram import Bot
 
-# Configurações da Supabase
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+bot = Bot(token=os.getenv("TELEGRAM_TOKEN"))
+user_id = int(os.getenv("TELEGRAM_USER_ID"))
 
-# Comando inicial
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Oi, eu sou a Dannyele, sua namorada virtual!")
+def send_random_message(message_list_name):
+    messages = eval(os.getenv(message_list_name, "[]"))
+    if messages:
+        message = random.choice(messages)
+        bot.send_message(chat_id=user_id, text=message)
 
-# Inicialização
-def main():
-    app = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
-    app.add_handler(CommandHandler("start", start))
-    app.run_polling()
+def send_personal_message(text):
+    bot.send_message(chat_id=user_id, text=text)
 
+def morning_routine():
+    send_random_message("GOOD_MORNING_MESSAGES")
+
+def night_routine():
+    send_random_message("GOOD_NIGHT_MESSAGES")
+
+def pre_sleep():
+    send_random_message("SLEEP_MESSAGES")
+
+def miss_you():
+    send_random_message("MISSING_YOU_MESSAGES")
+
+# Exemplo de chamada
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    main()
+    now = datetime.now().hour
+    if now == 8:
+        morning_routine()
+    elif now == 22:
+        night_routine()
