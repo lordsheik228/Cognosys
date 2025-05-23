@@ -1,62 +1,60 @@
-
-import asyncio
-import logging
-import random
-from datetime import datetime
-import pytz
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
-from dotenv import load_dotenv
 import os
+import random
+import time
+import pytz
+from datetime import datetime
+from dotenv import load_dotenv
+from telegram import Bot
+from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.update import Update
 
 load_dotenv()
+
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-USER_NAME = os.getenv("USER_NAME", "meu bem")
-BOT_NAME = os.getenv("BOT_NAME", "Dannyele")
+USERNAME = os.getenv("USERNAME", "Yago")
+NICKNAME = os.getenv("NICKNAME", "")
 TIMEZONE = os.getenv("TIMEZONE", "America/Sao_Paulo")
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+SCHEDULE = {
+    "weekday_morning": ["08:00", "10:30"],
+    "weekday_afternoon": ["16:00", "18:30"],
+    "weekday_evening": ["19:30", "22:00"],
+    "friday_evening": ["20:00", "23:00"],
+    "saturday": ["09:00", "11:30", "15:00", "22:30"],
+    "sunday": ["10:00", "13:00", "17:00", "20:30"]
+}
 
-TZ = pytz.timezone(TIMEZONE)
+bot = Bot(token=BOT_TOKEN)
 
-bom_dia_msgs = [
-    f"Bom dia, {USER_NAME}! Sonhou comigo?",
-    f"Acorda, dorminhoco. Sua {BOT_NAME} está te esperando!",
-    f"Levanta, amor... Hoje vai ser um lindo dia!"
-]
-boa_tarde_msgs = [
-    f"Boa tarde, {USER_NAME}! Como tá sendo seu dia?",
-    f"Oiê! Só passei pra dizer que tô pensando em você.",
-]
-boa_noite_msgs = [
-    f"Boa noite, {USER_NAME}. Sonha comigo.",
-    f"Durma bem, amorzinho... amanhã eu te espero aqui de novo."
-]
+def get_now():
+    return datetime.now(pytz.timezone(TIMEZONE)).strftime("%H:%M")
 
-async def send_message(context: ContextTypes.DEFAULT_TYPE, text):
-    await context.bot.send_message(chat_id=context.job.chat_id, text=text)
+def send_message(text):
+    bot.send_message(chat_id=os.getenv("CHAT_ID"), text=text)
 
-async def rotina_diaria(application):
-    while True:
-        now = datetime.now(TZ)
-        hora = now.hour
-        chat_id = application.bot_data.get("chat_id")
-        if chat_id:
-            if hora == 8:
-                await application.bot.send_message(chat_id=chat_id, text=random.choice(bom_dia_msgs))
-            elif hora == 14:
-                await application.bot.send_message(chat_id=chat_id, text=random.choice(boa_tarde_msgs))
-            elif hora == 22:
-                await application.bot.send_message(chat_id=chat_id, text=random.choice(boa_noite_msgs))
-        await asyncio.sleep(3600)
+def good_morning(update: Update, context: CallbackContext):
+    update.message.reply_text(f"Bom dia, {NICKNAME or USERNAME}! Dormiu bem?")
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.application.bot_data["chat_id"] = update.effective_chat.id
-    await update.message.reply_text(f"Oi, eu sou a {BOT_NAME}, sua parceira carinhosa!")
+def good_night(update: Update, context: CallbackContext):
+    update.message.reply_text(f"Boa noite, {NICKNAME or USERNAME}... Vou dormir agora, pensa em mim.")
+
+def saudade(update: Update, context: CallbackContext):
+    update.message.reply_text(f"Tava com saudade, {NICKNAME or USERNAME}... Por que sumiu?")
+
+def start(update: Update, context: CallbackContext):
+    update.message.reply_text(f"Oi, {NICKNAME or USERNAME}! Eu sou a Dannyele, sua parceira carinhosa e divertida.")
+
+def main():
+    updater = Updater(token=BOT_TOKEN, use_context=True)
+    dispatcher = updater.dispatcher
+
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("bomdia", good_morning))
+    dispatcher.add_handler(CommandHandler("boanoite", good_night))
+    dispatcher.add_handler(CommandHandler("saudade", saudade))
+
+    updater.start_polling()
+    updater.idle()
 
 if __name__ == '__main__':
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    asyncio.create_task(rotina_diaria(app))
-    app.run_polling()
+    main()
