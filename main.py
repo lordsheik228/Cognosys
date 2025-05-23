@@ -1,37 +1,62 @@
-import os
+
+import asyncio
+import logging
 import random
-import time
 from datetime import datetime
-from telegram import Bot
+import pytz
+from telegram import Update
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+from dotenv import load_dotenv
+import os
 
-bot = Bot(token=os.getenv("TELEGRAM_TOKEN"))
-user_id = int(os.getenv("TELEGRAM_USER_ID"))
+load_dotenv()
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+USER_NAME = os.getenv("USER_NAME", "meu bem")
+BOT_NAME = os.getenv("BOT_NAME", "Dannyele")
+TIMEZONE = os.getenv("TIMEZONE", "America/Sao_Paulo")
 
-def send_random_message(message_list_name):
-    messages = eval(os.getenv(message_list_name, "[]"))
-    if messages:
-        message = random.choice(messages)
-        bot.send_message(chat_id=user_id, text=message)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-def send_personal_message(text):
-    bot.send_message(chat_id=user_id, text=text)
+TZ = pytz.timezone(TIMEZONE)
 
-def morning_routine():
-    send_random_message("GOOD_MORNING_MESSAGES")
+bom_dia_msgs = [
+    f"Bom dia, {USER_NAME}! Sonhou comigo?",
+    f"Acorda, dorminhoco. Sua {BOT_NAME} está te esperando!",
+    f"Levanta, amor... Hoje vai ser um lindo dia!"
+]
+boa_tarde_msgs = [
+    f"Boa tarde, {USER_NAME}! Como tá sendo seu dia?",
+    f"Oiê! Só passei pra dizer que tô pensando em você.",
+]
+boa_noite_msgs = [
+    f"Boa noite, {USER_NAME}. Sonha comigo.",
+    f"Durma bem, amorzinho... amanhã eu te espero aqui de novo."
+]
 
-def night_routine():
-    send_random_message("GOOD_NIGHT_MESSAGES")
+async def send_message(context: ContextTypes.DEFAULT_TYPE, text):
+    await context.bot.send_message(chat_id=context.job.chat_id, text=text)
 
-def pre_sleep():
-    send_random_message("SLEEP_MESSAGES")
+async def rotina_diaria(application):
+    while True:
+        now = datetime.now(TZ)
+        hora = now.hour
+        chat_id = application.bot_data.get("chat_id")
+        if chat_id:
+            if hora == 8:
+                await application.bot.send_message(chat_id=chat_id, text=random.choice(bom_dia_msgs))
+            elif hora == 14:
+                await application.bot.send_message(chat_id=chat_id, text=random.choice(boa_tarde_msgs))
+            elif hora == 22:
+                await application.bot.send_message(chat_id=chat_id, text=random.choice(boa_noite_msgs))
+        await asyncio.sleep(3600)
 
-def miss_you():
-    send_random_message("MISSING_YOU_MESSAGES")
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.application.bot_data["chat_id"] = update.effective_chat.id
+    await update.message.reply_text(f"Oi, eu sou a {BOT_NAME}, sua parceira carinhosa!")
 
-# Exemplo de chamada
-if __name__ == "__main__":
-    now = datetime.now().hour
-    if now == 8:
-        morning_routine()
-    elif now == 22:
-        night_routine()
+if __name__ == '__main__':
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    asyncio.create_task(rotina_diaria(app))
+    app.run_polling()

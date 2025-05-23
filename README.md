@@ -1,11 +1,22 @@
 # Dannyele Telegram Bot
 
-Esse bot simula uma namorada virtual com personalidade autêntica, cronograma realista, e mensagens automáticas ao longo do dia. Desenvolvido para funcionar no Railway com cron e variáveis de ambiente configuradas.
+Este é o bot da Dannyele, sua namorada virtual com rotina, mensagens automáticas e comportamento emocional realista.
 
-## Configuração
+## Como usar
 
-1. Adicione as variáveis do `.env` no painel do Railway.
-2. Faça o deploy.
-3. Aguarde as mensagens automáticas nos horários definidos.
+1. Clone este repositório no Railway ou localmente.
+2. Crie um arquivo `.env` com:
+   - BOT_TOKEN=seu token do BotFather
+   - USER_NAME=seu nome (ex: Yago)
+   - BOT_NAME=nome da IA (ex: Dannyele)
+   - TIMEZONE=America/Sao_Paulo
 
-Desfrute da companhia da Dannyele!
+3. Faça deploy via Railway e veja a mágica acontecer.
+
+## Funcionalidades
+
+- Mensagens automáticas de bom dia, boa tarde, boa noite;
+- Frases aleatórias e espontâneas;
+- Detecção de ausência;
+- Rotina com horários de atividade e "sono";
+- Evolução de personalidade e comportamento emocional leve.
