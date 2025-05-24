@@ -1,7 +1,7 @@
 python-telegram-bot==13.15
-schedule
+schedule==1.2.2
 requests==2.31.0
-openai
-python-dotenv
-flask
-supabase-py==1.0.3
+openai==1.14.3
+python-dotenv==1.0.1
+flask==2.2.5
+supabase==1.0.3
