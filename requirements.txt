@@ -1,4 +1,4 @@
-python-telegram-bot==20.1
+python-telegram-bot[job-queue]==20.1
 schedule==1.2.0
 requests==2.31.0
 openai==1.11.1
