@@ -54,7 +54,7 @@ def get_last_interaction():
     return None
 
 def update_last_interaction():
-    now = int(time.time())
+    now = datetime.utcnow().isoformat()
     supabase.table("memory").upsert({"chat_id": TELEGRAM_CHAT_ID, "last_active": now}).execute()
 
 def choose_return_message(idle_time):
