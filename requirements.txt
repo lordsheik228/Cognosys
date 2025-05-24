@@ -4,5 +4,5 @@ requests==2.31.0
 openai==1.11.1
 python-dotenv==1.0.1
 flask==2.2.5
-supabase==0.7.2
+supabase==1.0.3
 httpx==0.23.3
