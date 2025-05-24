@@ -4,7 +4,7 @@ import time
 import random
 import requests
 from datetime import datetime
-from supabase_py import create_client, Client
+from supabase import create_client, Client
 
 # Variáveis do ambiente
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
