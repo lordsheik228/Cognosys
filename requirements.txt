@@ -4,4 +4,4 @@ requests==2.31.0
 openai
 python-dotenv
 flask
-supabase
+supabase-py==1.0.3
