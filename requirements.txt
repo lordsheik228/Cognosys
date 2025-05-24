@@ -3,5 +3,4 @@ schedule==1.2.2
 requests==2.31.0
 openai==1.14.3
 python-dotenv==1.0.1
-flask==2.2.5
 supabase==1.0.3
