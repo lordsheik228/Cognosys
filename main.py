@@ -1,4 +1,4 @@
-
+import nest_asyncio
 import os
 import random
 import time
@@ -106,4 +106,5 @@ async def start_bot():
     await app.run_polling()
 
 if __name__ == "__main__":
-    asyncio.run(start_bot())
+    nest_asyncio.apply()
+    asyncio.get_event_loop().run_until_complete(start_bot())
