@@ -1,0 +1,7 @@
+openai==1.30.3
+httpx==0.26.0
+python-telegram-bot==20.8
+supabase
+python-dotenv
+gtts
+pydub
