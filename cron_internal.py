@@ -62,3 +62,11 @@ def esta_super_disponivel():
     permitindo respostas mais rápidas e interações espontâneas.
     """
     return obter_status_rotina() == "livre" and obter_periodo_atividade() == "acordada"
+    
+    def esta_ocupada():
+    """
+    Retorna True se a Dannyele estiver no horário de trabalho (ocupada),
+    com base no cronograma semanal.
+    """
+    return obter_status_rotina() == "ocupada"
+
