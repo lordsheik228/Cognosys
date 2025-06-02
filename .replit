@@ -1,0 +1,18 @@
+language = "python3"
+run = "python3 main.py"
+
+[interpreter]
+  mode = "python3"
+  version = "3.11"
+
+[unitTest]
+  language = "python3"
+
+[deployment]
+  run = ["python3", "main.py"]
+
+[nix]
+  enable = false
+
+[env]
+  POETRY_PYPI_MIRROR = "https://pypi.org/simple"
