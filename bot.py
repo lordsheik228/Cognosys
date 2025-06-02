@@ -73,7 +73,10 @@ async def responder_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE)
     from openai import AsyncOpenAI
 
 
-    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    project_id = os.getenv("OPENAI_PROJECT_ID")
+headers = {"OpenAI-Project": project_id} if project_id else {}
+client = AsyncOpenAI(api_key=OPENAI_API_KEY, default_headers=headers)
+
 
     resposta_gpt3 = await client.chat.completions.create(
         model=GPT3_MODEL_NAME,
