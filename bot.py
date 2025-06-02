@@ -72,10 +72,8 @@ async def responder_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE)
     # Gera resposta com GPT-3.5-Turbo
     from openai import AsyncOpenAI
 
-    project_id = os.getenv("OPENAI_PROJECT_ID")
-    headers = {"OpenAI-Project": project_id} if project_id else {}
 
-    client = AsyncOpenAI(api_key=OPENAI_API_KEY, default_headers=headers)
+    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
     resposta_gpt3 = await client.chat.completions.create(
         model=GPT3_MODEL_NAME,
