@@ -11,13 +11,14 @@ from config import (
     TELEGRAM_BOT_TOKEN, TELEGRAM_USER_ID, NOME_IA, NOME_USUARIO,
     TEMPO_RESPOSTA_MINIMA, TEMPO_RESPOSTA_MAXIMA, TEMPO_RESPOSTA_SUPER_DISPONIVEL,
     INTERVALO_MSG_ESPONTANEAS, TEMPO_AUSENCIA_MAXIMA, PERSONALIDADE_BASE,
-    MENSAGEM_OCUPADA_VARIADA
+    MENSAGEM_OCUPADA_VARIADA, OPENAI_API_KEY, GPT3_MODEL_NAME, GPT4_MODEL_NAME
 )
 from memory import salvar_memoria
 from emotion import detectar_emocao
 from cron_internal import esta_ocupada, esta_dormindo
 import random
 import datetime
+import os
 
 # === Estado da IA ===
 ultima_interacao = None
@@ -54,7 +55,7 @@ async def responder_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE)
     if esta_dormindo():
         return
     if esta_ocupada():
-        if MENSAGEM_OCUPADA_VARIADA.lower() == "sim":
+        if MENSAGEM_OCUPADA_VARIADA:
             resposta_ocupada = random.choice(mensagens_ocupada_exemplo)
         else:
             resposta_ocupada = "Amor, estou ocupada agora. Já volto pra falar com você!"
@@ -68,25 +69,38 @@ async def responder_mensagem(update: Update, context: ContextTypes.DEFAULT_TYPE)
         tempo_resposta = random.randint(TEMPO_RESPOSTA_MINIMA, TEMPO_RESPOSTA_MAXIMA)
     await asyncio.sleep(tempo_resposta)
 
-    # Gera resposta com OpenAI
+    # Gera resposta com GPT-3.5-Turbo
     from openai import AsyncOpenAI
-    from config import OPENAI_API_KEY, GPT4_MODEL_NAME, GPT3_MODEL_NAME
 
-    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    project_id = os.getenv("OPENAI_PROJECT_ID")
+    headers = {"OpenAI-Project": project_id} if project_id else {}
 
-    resposta = await client.chat.completions.create(
+    client = AsyncOpenAI(api_key=OPENAI_API_KEY, default_headers=headers)
+
+    resposta_gpt3 = await client.chat.completions.create(
         model=GPT3_MODEL_NAME,
         messages=[
             {"role": "system", "content": PERSONALIDADE_BASE},
             {"role": "user", "content": texto_usuario}
         ]
     )
-
-    conteudo = resposta.choices[0].message.content.strip()
-    await update.message.reply_text(conteudo)
+    conteudo = resposta_gpt3.choices[0].message.content.strip()
 
     # Detecta emoção
     emocao = detectar_emocao(conteudo)
+
+    # Se emoção detectada for significativa, reprocessa com GPT-4
+    if emocao not in ["neutra", "informativa", None]:
+        resposta_gpt4 = await client.chat.completions.create(
+            model=GPT4_MODEL_NAME,
+            messages=[
+                {"role": "system", "content": PERSONALIDADE_BASE},
+                {"role": "user", "content": texto_usuario}
+            ]
+        )
+        conteudo = resposta_gpt4.choices[0].message.content.strip()
+
+    await update.message.reply_text(conteudo)
 
     # Salva memória
     await salvar_memoria(
@@ -129,7 +143,6 @@ async def main():
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), responder_mensagem))
 
-    # Inicia tarefas em segundo plano
     asyncio.create_task(verificar_ausencia(application))
     asyncio.create_task(mensagens_espontaneas_loop(application))
 
